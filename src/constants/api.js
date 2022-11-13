@@ -6,7 +6,7 @@ export const UserLogin = 'UserLogin'
 
 
 export const api = axios.create();
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
     return {
         ...config,
         baseURL: baseURL,
