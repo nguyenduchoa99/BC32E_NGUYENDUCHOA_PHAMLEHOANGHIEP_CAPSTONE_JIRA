@@ -2,9 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import projectService from '../../services/projectService';
 
 const initialState = {
-    error: '',
-    isLoading: false,
-    list: []
+    error: '', isLoading: false, list: [],
+
 }
 export const { reducer: projectReducer, ation: projectActions } = createSlice({
     name: 'project',
@@ -22,7 +21,7 @@ export const { reducer: projectReducer, ation: projectActions } = createSlice({
                 state.error = payload;
                 state.isLoading = false;
             })
-            
+
     }
 })
 export const ProjectCategory = createAsyncThunk(
@@ -36,4 +35,16 @@ export const ProjectCategory = createAsyncThunk(
             return rejectWithValue(err)
         }
     }
-)
+);
+export const createProjectAuthorize = createAsyncThunk(
+    'project/createProjectAuthorize',
+    async(values,{dispatch,rejectWithValue})=>{
+        try{
+            const data = projectService.createProjectAuthorize(values);
+            return data;
+        }
+        catch (err){
+            return rejectWithValue(err)
+        }
+    }
+);
