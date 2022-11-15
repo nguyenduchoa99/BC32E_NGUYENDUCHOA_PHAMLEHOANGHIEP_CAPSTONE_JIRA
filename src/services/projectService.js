@@ -3,8 +3,8 @@ const projectService = {
     getAllProjectCategory: () => {
         return api.get("ProjectCategory")
     },
-    createProject: (values) => {
-        return api.post("Project/createProject", { ...values })
+    createProjectAuthorize: (values) => {
+        return api.post("Project/createProjectAuthorize", { ...values })
     }
 }
 export default projectService;
