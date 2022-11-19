@@ -11,6 +11,7 @@ const MenuLayout = () => {
             <div className="menu-item">
                 <NavLink to='/' className='item'><i className="fa-solid fa-credit-card mr-2"></i> <span className='item-span'>Board</span></NavLink>
                 <NavLink to='/createProject' className='item'><i className="fa-solid fa-gear mr-3"></i><span className='item-span'>Create Project</span></NavLink>
+                <NavLink to='/listProject' className='item'><i className="fa-solid fa-list mr-3"></i><span className='item-span'>List Project</span></NavLink>
             </div>
             <div className='about'>
                 <a className='about-menu'>
