@@ -1,48 +1,60 @@
-import React, { useEffect } from 'react'
-import { ProjectCategory, createProjectAuthorize } from '../../store/projectReducer/projectReducer';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import './createProject.scss'
-import Swal from 'sweetalert2';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { message } from 'antd';
-const CreateProject = () => {
+import { useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProjectDetail, updateProject, ProjectCategory } from '../../store/projectReducer/projectReducer';
+
+
+const UpdateProject = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { list: aliass } = useSelector((state) => state.projectReducer);
+    const { projectId } = useParams();
+    const user = JSON.parse(localStorage.getItem("user"));
+    const { dataProjectDetail: projects, list: aliass } = useSelector((state) => state.projectReducer);
+    console.log(projects);
+    const creatorId = projects.creator?.id;
     useEffect(() => {
-        dispatch(ProjectCategory())
+        dispatch(getProjectDetail({ projectId }));
+        dispatch(ProjectCategory());
     }, []);
     const { handleSubmit, register, setValue, formState: { errors } } = useForm({
         defaultValues: {
+            id: projects.id,
             projectName: "",
+            creator: creatorId,
             description: "",
             categoryId: "",
-            alias: "",
         },
-        mode: 'onTouched',
+        mode: "onTouched",
     });
+    const setInput = () => {
+        setValue("projectName", projects?.projectName);
+        setValue('description', projects?.description);
+        setValue('categoryId', projects?.projectCategory?.id);
+    };
     const handleChange = (e) => {
         const type = e.target.value;
-        setValue('categoryId', type);
+        setValue("categoryId", type);
     };
     const onSubmit = async (values) => {
         try {
-            await dispatch(createProjectAuthorize(values)).unwrap();
+            const user = JSON.parse(localStorage.getItem("user"));
+            await dispatch(updateProject({ values, projectId })).unwrap();
             navigate('/');
-            await Swal.fire({
+            Swal.fire({
                 icon: 'success',
-                title: 'Tạo Project thành công',
-            })
+                title: 'Cập nhật project thành công'
+            });
         }
         catch (err) {
             Swal.fire({
                 icon: 'error',
-                title: 'Tạo Project thất bại',
-                text: err.message
+                title: "Cập nhật project thất bại",
+                text: err
             });
         }
-    }
+    };
     return (
         <div className='create-project' >
             <div className='create-form'>
@@ -101,12 +113,13 @@ const CreateProject = () => {
                         )}
                     </div>
                     <div>
-                        <button className='create-btn'>Create Project</button>
+                        <button className='create-btn'>Update Project</button>
                     </div>
                 </form>
+                {setInput()}
             </div>
         </div>
     )
 }
 
-export default CreateProject
+export default UpdateProject
