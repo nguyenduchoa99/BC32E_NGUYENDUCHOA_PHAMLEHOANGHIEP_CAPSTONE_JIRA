@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react'
-import { ProjectCategory, createProjectAuthorize } from '../../store/projectReducer/projectReducer';
-import { useNavigate } from 'react-router-dom';
+import { createProjectAuthorize, ProjectCategory } from '../../../store/projectReducer/projectReducer';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import './createProject.scss'
 import Swal from 'sweetalert2';
 import { useForm } from 'react-hook-form';
-import { message } from 'antd';
+import { Layout } from 'antd';
+import { logout } from '../../../store/authReducer/authReducer';
+const { Header } = Layout;
 const CreateProject = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { list: aliass } = useSelector((state) => state.projectReducer);
+    const { list: aliass } = useSelector((state) => state.project);
+    const user = JSON.parse(localStorage.getItem("user"));
     useEffect(() => {
         dispatch(ProjectCategory())
     }, []);
@@ -27,9 +30,11 @@ const CreateProject = () => {
         setValue('categoryId', type);
     };
     const onSubmit = async (values) => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const acce = user.accessToken;
         try {
-            await dispatch(createProjectAuthorize(values)).unwrap();
-            navigate('/');
+            await dispatch(createProjectAuthorize({values,acce})).unwrap();
+            navigate('/listProject');
             await Swal.fire({
                 icon: 'success',
                 title: 'Tạo Project thành công',
@@ -39,12 +44,34 @@ const CreateProject = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Tạo Project thất bại',
-                text: err.message
+                text: err.content
             });
         }
     }
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/login')
+    }
+    if (!user) {
+        return <Navigate to='/login' />;
+    }
     return (
-        <div className='create-project' >
+        <Layout className='create-project' >
+            <Header style={{ background: "white", padding: "0px",position:'absolute',top:'0',right:0}}>
+                {user ? (
+                    <div style={{ display: 'flex' }}>
+                        <div>
+                            <span className='text-span-icon'>
+                                <i className="fa-solid fa-user"></i>
+                            </span>
+                            <strong className='text-name-strong'>{user.name}</strong>
+                        </div>
+                        <div>
+                            <button className='btn-logout' onClick={handleLogout}>Logout</button>
+                        </div>
+                    </div>
+                ) : null}
+            </Header>
             <div className='create-form'>
                 <h1 className='text-center text-[30px] font-bold'>Create Project</h1>
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -105,7 +132,7 @@ const CreateProject = () => {
                     </div>
                 </form>
             </div>
-        </div>
+        </Layout>
     )
 }
 

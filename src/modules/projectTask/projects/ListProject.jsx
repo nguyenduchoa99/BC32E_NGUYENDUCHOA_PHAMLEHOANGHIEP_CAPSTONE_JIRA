@@ -4,29 +4,31 @@ import {
     deleteProject,
     getUser,
     assignUserProject,
-    removeUser
-} from '../../store/projectReducer/projectReducer';
-import { getProjectDetails } from '../../store/taskReducer/taskReducer';
+    removeUserz
+} from '../../../store/projectReducer/projectReducer';
+import { getProjectDetails } from '../../../store/taskReducer/taskReducer';
 import { useForm } from 'react-hook-form';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Layout, Menu, Modal, Table } from 'antd';
+import { Layout, Modal, Table } from 'antd';
 import Swal from 'sweetalert2';
 import {
     ExclamationCircleOutlined,
     PlusCircleOutlined,
-    DeleteOutlined
+    DeleteOutlined,
 } from "@ant-design/icons";
+import './listProject.scss'
+import { logout } from '../../../store/authReducer/authReducer';
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Header } = Layout;
 const { confirm } = Modal;
 const ListProject = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [collapsed, setCollapsed] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data: projects, dataUser: users } = useSelector((state) => state.projectReducer);
-    const { dataPD: tasks } = useSelector((state) => state.taskReducer);
+    const { data: projects, listuser: users } = useSelector((state) => state.project);
+    const { data1: tasks } = useSelector((state) => state.task);
     const user = JSON.parse(localStorage.getItem("user"));
     useEffect(() => {
         dispatch(getAllProject());
@@ -58,17 +60,8 @@ const ListProject = () => {
     const handleOk = () => {
         setIsModalOpen(false);
     };
-    const handleClick = () => {
-        navigate('/');
-    };
-    const handleAddProject = () => {
-        navigate("/addproject");
-    };
-    const handleUser = () => {
-        navigate('/user');
-    };
-    const handleGetProjectDetail = (taskId) => {
-        dispatch(getProjectDetails({ taskId }));
+    const handleGetProjectDetail = (taskId, acce) => {
+        dispatch(getProjectDetails({ taskId, acce }));
     };
     const handleGetUser = (values) => {
         dispatch(getUser(values));
@@ -83,11 +76,19 @@ const ListProject = () => {
         const type = e.target.value;
         setValue("userId", type);
     };
+    const handleChange2 = e => {
+        const type = e.target.value;
+        setValue("projectId", type)
+    }
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/login')
+    }
     const onSubmit = async (values) => {
         const user = JSON.parse(localStorage.getItem("user"));
         const acces = user.accessToken;
         try {
-            await dispatch(assignUserProject({ values })).unwrap();
+            await dispatch(assignUserProject({ values, acces })).unwrap();
             dispatch(getProjectDetails());
             Swal.fire({
                 icon: 'success',
@@ -95,17 +96,19 @@ const ListProject = () => {
             })
         }
         catch (err) {
+            console.log(err);
             Swal.fire({
                 icon: 'error',
                 title: 'Thêm user thất bại',
-                text: err
+                text: err.content
             });
         }
     };
-    const removeUsers = (projectId, userId) => {
+    const removeUser = (projectId, userId) => {
         const user = JSON.parse(localStorage.getItem("user"));
-        dispatch(removeUser({ values: { projectId, userId } }));
-    };
+        const acces = user.accessToken;
+        dispatch(removeUserz({ values: { projectId, userId }, acces }));
+    }
 
     if (!user) {
         return <Navigate to='/login' />;
@@ -187,7 +190,7 @@ const ListProject = () => {
         })
     }
     return (
-        <div>
+        <Layout>
             <Modal
                 title="Members"
                 open={isModalOpen}
@@ -197,7 +200,7 @@ const ListProject = () => {
                 <table>
                     <thead>
                         <tr>
-                            <th style={{ padding: "5px 40px" }}>Id</th>
+                            <th style={{ padding: "5px 40px" }} >Id</th>
                             <th style={{ padding: "5px 40px" }}>Avatar</th>
                             <th style={{ padding: "5px 40px" }}>Name</th>
                             <th style={{ padding: "5px 40px" }}>Action</th>
@@ -207,17 +210,16 @@ const ListProject = () => {
                         {tasks?.members?.map((member) => {
                             return (
                                 <tr key={member.userId}>
-                                    <td style={{ padding: "5px 40px" }}>{member.userId}</td>
+                                    <td style={{ padding: "5px 40px" }} className='text-blue-500'>{member.userId}</td>
                                     <td style={{ padding: "5px 40px" }}>
                                         <img src={member.avatar}></img>
                                     </td>
-                                    <td style={{ padding: "5px 40px" }}>{member.name}</td>
+                                    <td style={{ padding: "5px 40px" }} className='font-bold'>{member.name}</td>
                                     <td style={{ padding: "5px 40px" }}>
-                                        <button
-                                            onClick={() => removeUsers(tasks.id, member.userId)}
-
+                                        <button className='border-2 border-red-500 pl-1 pr-1 ml-2'
+                                            onClick={() => removeUser(tasks.id, member.userId)}
                                         >
-                                            <DeleteOutlined />
+                                            <i className="fa-sharp fa-solid fa-trash text-red-500"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -226,10 +228,22 @@ const ListProject = () => {
                     </tbody>
                 </table>
 
-                <h4>Add User</h4>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <select onChange={handleChange}>
-                        <option value="">chọn user</option>
+                <h4 className='font-bold pt-5 text-[20px]'>Add User</h4>
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    <select onChange={handleChange2} className='sec-ch-pro'>
+                        <option value="">Chọn Project</option>
+                        {projects.map((pro) => {
+                            return (
+                                <option key={pro.id} value={pro.id}>
+                                    {pro.projectName}
+                                </option>
+                            );
+                        })}
+                    </select>
+                    <select onChange={handleChange} className='sec-ch-us'>
+                        <option value="">Chọn User</option>
                         {users.map((usera) => {
                             return (
                                 <option key={usera.userId} value={usera.userId}>
@@ -238,15 +252,33 @@ const ListProject = () => {
                             );
                         })}
                     </select>
-                    <button >
-                        <PlusCircleOutlined />
+                    <button
+                        className='border-2 border-green-500 pl-2 pr-2 pt-1 pb-1 ml-[30px] hover:border-green-700'
+                    >
+                        <i className="fa-solid fa-plus text-green-400"></i>
                     </button>
                 </form>
             </Modal>
+            <Header style={{ background: "white", padding: "0px", display: 'flex', justifyContent: "space-between" }}>
+                <h1 className='text-project'>Project Management</h1>
+                {user ? (
+                    <div style={{ display: 'flex' }}>
+                        <div>
+                            <span className='text-span-icon'>
+                                <i className="fa-solid fa-user"></i>
+                            </span>
+                            <strong className='text-name-strong'>{user.name}</strong>
+                        </div>
+                        <div>
+                            <button className='btn-logout' onClick={handleLogout}>Logout</button>
+                        </div>
+                    </div>
+                ) : null}
+            </Header>
             <div>
                 <Table columns={columns} dataSource={data} />
             </div>
-        </div>
+        </Layout>
     )
 }
 

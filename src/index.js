@@ -1,11 +1,12 @@
 import React from 'react';
+import store from './store/store';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import "antd/dist/antd.min.css";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import "antd/dist/antd.min.css";
 import { Provider } from 'react-redux';
-import { store } from './store/config';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

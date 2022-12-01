@@ -1,183 +1,190 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { data } from 'autoprefixer';
-import projectService from '../../services/projectService';
-import { getProjectDetails } from '../taskReducer/taskReducer'
-const initialState = {
-    error: '', isLoading: false, list: [],
-    errorGetAllProject: '', isloadingGetAllProject: false, data: [],
-    errorGetUser: '', isLoadingGetUser: false, dataUser: [],
-    errorGetProjectDetail: '', isLoadingGetProjectDetail: false, dataProjectDetail: []
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import projectServices from "../../services/projectServices";
+import { getProjectDetails } from "../taskReducer/taskReducer";
 
-}
-export const { reducer: projectReducer, ation: projectActions } = createSlice({
-    name: 'project',
-    initialState,
-    reducers: {},
-    extraReducers: (buidlder) => {
-        buidlder
-            //ProjectCategory
-            .addCase(ProjectCategory.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(ProjectCategory.fulfilled, (state, { payload }) => {
-                state.list = payload;
-                state.isLoading = false;
-            })
-            .addCase(ProjectCategory.rejected, (state, { payload }) => {
-                state.error = payload;
-                state.isLoading = false;
-            })
-            //GET ALL PROJECT
-            .addCase(getAllProject.pending, (state) => {
-                state.isloadingGetAllProject = true;
-            })
-            .addCase(getAllProject.fulfilled, (state, action) => {
-                state.data = action.payload;
-                state.isloadingGetAllProject = false;
-            })
-            .addCase(getAllProject.rejected, (state, action) => {
-                state.errorGetAllProject = action.payload;
-                state.isloadingGetAllProject = false;
-            })
-            //GET USER
-            .addCase(getUser.pending, (state) => {
-                state.isLoadingGetUser = true;
-            })
-            .addCase(getUser.fulfilled, (state, action) => {
-                state.dataUser = action.payload;
-                state.isLoadingGetUser = false;
-            })
-            .addCase(getUser.rejected, (state, action) => {
-                state.errorGetUser = action.payload;
-                state.isLoadingGetUser = false;
-            })
-            // GET PROJECT DETAIL
-            .addCase(getProjectDetail.pending, (state) => {
-                state.isLoadingGetProjectDetail = true;
-            })
-            .addCase(getProjectDetail.fulfilled, (state, action) => {
-                state.dataProjectDetail = action.payload;
-                state.isLoadingGetProjectDetail = false;
-            })
-            .addCase(getProjectDetail.rejected, (state, action) => {
-                state.errorGetProjectDetail = action.payload;
-                state.isLoadingGetProjectDetail = false;
-            })
+const initialState = {
+    data: [],
+    isLoading: null,
+    error: "",
+    update: [],
+    list: [],
+    listuser: [],
+};
+
+export const getAllProject = createAsyncThunk(
+    "project/getAllProject",
+    async (acces, { rejectWithValue }) => {
+        try {
+            const data = await projectServices.getAllProject();
+            return data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
     }
-})
+);
+
+export const getUser = createAsyncThunk(
+    "project/getUser",
+    async (acces, { rejectWithValue }) => {
+        try {
+            const data = await projectServices.getUser(acces);
+            return data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const createProjectAuthorize = createAsyncThunk(
+    "project/createProject",
+    async (title, { rejectWithValue }) => {
+        try {
+            const data = await projectServices.createProjectAuthorize(
+                title.values,
+                title.acce
+            );
+            return data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const deleteProject = createAsyncThunk(
+    "project/deleteProject",
+    async (title, { rejectWithValue, dispatch }) => {
+        try {
+            const data = await projectServices.deleteProject(title.projectId, title.acces);
+            dispatch(getAllProject());
+            return data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const ProjectCategory = createAsyncThunk(
     "project/ProjectCategory",
     async (_, { rejectWithValue }) => {
         try {
-            const result = await projectService.getAllProjectCategory();
-            return result.data.content;
-        }
-        catch (err) {
-            return rejectWithValue(err)
-        }
-    }
-);
-export const createProjectAuthorize = createAsyncThunk(
-    'project/createProjectAuthorize',
-    async (values, { rejectWithValue }) => {
-        try {
-            const data = projectService.createProjectAuthorize(values);
-            return data;
-        }
-        catch (err) {
-            return rejectWithValue(err)
+            const dataz = await projectServices.ProjectCategory();
+            return dataz;
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 );
 
-export const getAllProject = createAsyncThunk(
-    'project/getAllProject',
-    async (_, { rejectWithValue }) => {
-        try {
-            const result = await projectService.getAllProject();
-            return result.data.content;
-        }
-        catch (err) {
-            return rejectWithValue(err);
-        }
-    }
-);
-export const getUser = createAsyncThunk(
-    'project/getUser',
-    async (_, { rejectWithValue }) => {
-        try {
-            const result = await projectService.getUser();
-            return result.data.content;
-        }
-        catch (err) {
-            return rejectWithValue(err);
-        }
-    }
-);
-export const deleteProject = createAsyncThunk(
-    'project/deleteProject',
-    async (values, { rejectWithValue, dispatch }) => {
-        try {
-            const data = await projectService.deleteProject(values.projectId);
-            dispatch(getAllProject());
-            return data;
-        }
-        catch (err) {
-            return rejectWithValue(err);
-        }
-    }
-);
 export const getProjectDetail = createAsyncThunk(
-    'project/getProjectDetail',
-    async (values, { rejectWithValue }) => {
+    "project/getProjectDetail",
+    async (title, { rejectWithValue }) => {
         try {
-            const data = await projectService.getProjectDetail(values.projectId);
+            const data = await projectServices.getProjectDetail(
+                title.projectId,
+                title.acce
+            );
             return data;
-        }
-        catch (err) {
-            return rejectWithValue(err);
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 );
 
-export const updateProject = createAsyncThunk(
-    'project/updateProject',
-    async (values, { rejectWithValue }) => {
+export const updateProjects = createAsyncThunk(
+    "project/updateProject",
+    async (title, { rejectWithValue }) => {
         try {
-            const result = await projectService.updateProject(values.values, values.projectId);
-            return result.data.content;
-        }
-        catch (err) {
-            return rejectWithValue(err);
+            const data = await projectServices.updateProjects(
+                title.values,
+                title.projectId,
+                title.acce,
+            );
+            return data;
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 );
 
 export const assignUserProject = createAsyncThunk(
-    'project/assignUserProject',
-    async (values, { rejectWithValue, dispatch }) => {
+    "project/assignUserProject",
+    async (title, { rejectWithValue, dispatch }) => {
         try {
-            const data = await projectService.assignUserProject(values.values);
-            dispatch(getProjectDetails({ taskId: values.values.projectId }));
-            dispatch(getAllProject());
+            const data = await projectServices.assignUserProject(
+                title.values,
+                title.acces,
+            );
+            dispatch(getProjectDetails({ taskId: title.values.projectId, acce: title.acces }))
+            dispatch(getAllProject())
             return data;
-        }
-        catch (err) {
-            return rejectWithValue(err);
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 );
-export const removeUser = createAsyncThunk(
-    'project/removeUserproject',
-    async (values, { rejectWithValue, dispatch }) => {
+export const removeUserz = createAsyncThunk(
+    "project/removeUseroject",
+    async (title, { rejectWithValue, dispatch }) => {
         try {
-            const data = await projectService.removeUserProject(values.values);
-            dispatch(getProjectDetails({ taskId: values.values.projectId }));
-            dispatch(getAllProject());
+            const data = await projectServices.removeUserProject(
+                title.values,
+                title.acces,
+            );
+            dispatch(getProjectDetails({ taskId: title.values.projectId, acce: title.acces }))
+            dispatch(getAllProject())
             return data;
-        }
-        catch (err) {
-            return rejectWithValue(err);
+        } catch (error) {
+            return rejectWithValue(error);
         }
     }
 );
+
+const projectReducer = createSlice({
+    name: "project",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder.addCase(getAllProject.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(getAllProject.fulfilled, (state, { payload }) => {
+            state.data = payload;
+            state.isLoading = false;
+        });
+        builder.addCase(getAllProject.rejected, (state, { payload }) => {
+            state.error = payload;
+            state.isLoading = false;
+        });
+
+        builder.addCase(ProjectCategory.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(ProjectCategory.fulfilled, (state, { payload }) => {
+            state.list = payload;
+            state.isLoading = false;
+        });
+        builder.addCase(ProjectCategory.rejected, (state, { payload }) => {
+            state.error = payload;
+            state.isLoading = false;
+        });
+
+        builder.addCase(getUser.fulfilled, (state, { payload }) => {
+            state.listuser = payload;
+            state.isLoading = false;
+        });
+
+        builder.addCase(getProjectDetail.pending, (state) => {
+            state.isLoading = true;
+        });
+        builder.addCase(getProjectDetail.fulfilled, (state, { payload }) => {
+            state.update = payload;
+            state.isLoading = false;
+        });
+        builder.addCase(getProjectDetail.rejected, (state, { payload }) => {
+            state.error = payload;
+            state.isLoading = false;
+        });
+    },
+});
+
+export default projectReducer.reducer;
