@@ -1,10 +1,14 @@
-import React from 'react';
+import React from 'react'
 import { useRoutes } from 'react-router-dom';
-import MainLayout from '../components/MainLayout/MainLayout';
-import Board from '../modules/Board/Board';
-import CreateProject from '../modules/CreateProject/CreateProject';
-import ListProject from '../modules/ListProject/ListProject';
-import UpdateProject from '../modules/updateProject/UpdateProject';
+import MainLayout from '../components/MainLayout/MainLayout'
+import CheckLogin from '../modules/projectTask/projects/CheckLogin';
+import CreateProject from '../modules/projectTask/projects/CreateProject';
+import ListProject from '../modules/projectTask/projects/ListProject';
+import UpdateProject from '../modules/projectTask/projects/UpdateProject';
+import CreateTask from '../modules/projectTask/task/CreateTask';
+import ListTask from '../modules/projectTask/task/ListTask';
+import UpdateTask from '../modules/projectTask/task/UpdateTask';
+
 const Routers = () => {
     const routing = useRoutes([
         {
@@ -12,8 +16,8 @@ const Routers = () => {
             element: <MainLayout />,
             children: [
                 {
-                    path: '/',
-                    element: <Board />
+                    path:'/',
+                    element:<CheckLogin />
                 },
                 {
                     path: '/createProject',
@@ -21,16 +25,28 @@ const Routers = () => {
                 },
                 {
                     path: '/listProject',
-                    element:<ListProject />
+                    element: <ListProject />
                 },
                 {
-                    path:'/updateproject/:projectId',
-                    element:<UpdateProject />
+                    path: '/updateProject/:projectId',
+                    element: <UpdateProject />
+                },
+                {
+                    path: '/task/:taskId',
+                    element: <ListTask />
+                },
+                {
+                    path: '/task/:taskId/createTask',
+                    element: <CreateTask />
+                },
+                {
+                    path: '/task/updatetask/:taskId',
+                    element: <UpdateTask />
                 }
             ]
-        }
+        },
     ])
-    return routing;
+    return routing
 }
 
 export default Routers
