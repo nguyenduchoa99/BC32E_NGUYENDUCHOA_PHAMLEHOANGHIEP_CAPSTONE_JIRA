@@ -210,12 +210,12 @@ const ListProject = () => {
                         {tasks?.members?.map((member) => {
                             return (
                                 <tr key={member.userId}>
-                                    <td style={{ padding: "5px 40px" }} className='text-blue-500'>{member.userId}</td>
-                                    <td style={{ padding: "5px 40px" }}>
-                                        <img src={member.avatar}></img>
+                                    <td style={{ padding: "20px" }} className='text-blue-500'>{member.userId}</td>
+                                    <td style={{  padding: 5 }}>
+                                        <img style={{borderRadius: '50px',marginLeft:'20px'}} src={member.avatar}></img>
                                     </td>
-                                    <td style={{ padding: "5px 40px" }} className='font-bold'>{member.name}</td>
-                                    <td style={{ padding: "5px 40px" }}>
+                                    <td style={{ padding: "20px" }} className='font-bold'>{member.name}</td>
+                                    <td style={{ padding: "20px" }}>
                                         <button className='border-2 border-red-500 pl-1 pr-1 ml-2'
                                             onClick={() => removeUser(tasks.id, member.userId)}
                                         >
