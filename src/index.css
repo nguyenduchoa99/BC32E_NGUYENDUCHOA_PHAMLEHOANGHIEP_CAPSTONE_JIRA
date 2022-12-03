@@ -15,3 +15,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.ant-btn-primary {
+  background-color: #4096ff;
+
+}
+
+.ant-btn-primary:hover {
+  background-color: #1746A2 !important;
+}

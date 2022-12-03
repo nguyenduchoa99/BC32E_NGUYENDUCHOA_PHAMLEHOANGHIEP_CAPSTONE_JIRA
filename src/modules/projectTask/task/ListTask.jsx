@@ -225,7 +225,7 @@ const ListTask = () => {
                             return (
                                 <div className="flex border-b-2 border-black pb-2">
                                     <span className="text-[20px] font-bold">{com.user.name}:</span>
-                                    <span className="ml-5 text-[16px] mt-[6px]" style={{ width: '78%' }}>{com.contentComment}</span>
+                                    <span className="ml-5 text-[16px] mt-[6px]" style={{ width: '70%' }}>{com.contentComment}</span>
 
                                     <div className="mt-[6px]">
                                         <button
