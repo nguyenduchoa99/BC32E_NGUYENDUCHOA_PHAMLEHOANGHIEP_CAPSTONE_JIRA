@@ -1,0 +1,50 @@
+.layout-main {
+    position: relative;
+
+    .auth-layout {
+        background-image: url("../../assets/imgs/backgroudjira.jpg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100vh;
+        filter: brightness(90%);
+        width: 100%;
+    }
+
+    .auth-form {
+        position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+		border-radius: 20px;
+		display: flex;
+        .auth-user-form{
+            width: 400px;
+			padding: 10px 20px;
+			background-color: #fff;
+			border-radius: 20px;
+        }
+    }
+}
+
+@media screen and (max-width: 992px) {
+	.layout-main {
+		.auth-form {
+			.auth-user-form{
+				border-radius: 20px;
+				padding: 20px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 400px) {
+	.layout-main {
+		.auth-form {
+			.auth-user-form {
+				width: 320px;
+			}
+		}
+	}
+}
