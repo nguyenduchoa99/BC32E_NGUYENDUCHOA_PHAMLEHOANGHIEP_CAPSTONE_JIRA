@@ -60,7 +60,7 @@ const UpdateProject = () => {
             const user = JSON.parse(localStorage.getItem("user"));
             const acce = user.accessToken;
             await dispatch(updateProjects({ values, projectId, acce })).unwrap();
-            navigate("/");
+            navigate("/listProject");
             Swal.fire({
                 icon: 'success',
                 title: 'Update Project thành công'
